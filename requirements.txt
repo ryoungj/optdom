@@ -1,0 +1,28 @@
+numpy
+scipy
+torchmetrics
+matplotlib
+seaborn
+pillow
+einops
+pandas
+sklearn
+
+# pytorch lightning
+pytorch-lightning
+pytorch-lightning-bolts
+
+# for using entropy bottleneck
+compressai
+
+# if you want to log using wandb
+wandb
+
+# process text prompts for CLIP if want to
+language-tool-python
+
+# CLIP
+ftfy
+regex
+tqdm
+git+https://github.com/openai/CLIP.git
