@@ -48,6 +48,7 @@ bash run_sweep_clip.sh
 ```
 A sweep over 10 hyperparameters and 5 random seeds is launched for each dataset and algorithm. 
 By default, the CLIP-RN50 model is used, and you can also run with other models by changing the `clip_model` argument, e.g., `ViT-B/32` for CLIP-ViT-B/32.
+Also to launch a sweep, you need to select or implement a command launcher in [domainbed/command_launchers.py](DomainBed/domainbed/command_launchers.py) by setting the `launcher` argument. If you are using slurm, we already implement a slurm launcher that you can adapt from.
 
 After the sweep is finished, you can collect result with the notebook [collect_clip_results.ipynb](DomainBed/collect_clip_results.ipynb). Note that the results may be slightly different from the paper due to code cleaning. 
 
