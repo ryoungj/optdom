@@ -1,5 +1,3 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
-
 import argparse
 import collections
 import json
@@ -48,8 +46,6 @@ if __name__ == "__main__":
                         help='Trial number (used for seeding split_dataset and random hparams).')
     parser.add_argument('--seed', type=int, default=0,
                         help='Seed for everything else')
-    parser.add_argument('--steps', type=int, default=None,
-                        help='Number of steps. Default is dataset-dependent.')
     parser.add_argument('--checkpoint_freq', type=int, default=None,
                         help='Checkpoint every N steps. Default is dataset-dependent.')
     parser.add_argument('--test_envs', type=int, nargs='+', default=[0],
@@ -466,6 +462,7 @@ if __name__ == "__main__":
     best_valid_results_all_doms = None
     best_valid_model_all_doms = None
     only_eval_last = args.dataset in ['OfficeHome', 'DomainNet']
+    eval_loss = algorithm.trainable and (not algorithm.use_clip_contrast)
 
     for step in range(start_step, n_steps):
         if algorithm.trainable and not args.only_eval:
@@ -494,7 +491,7 @@ if __name__ == "__main__":
             for key, val in checkpoint_vals.items():
                 results[key] = np.mean(val)
 
-            if algorithm.trainable:
+            if eval_loss:
                 valid_loss = eval_val_loss(algorithm, args.test_envs)
                 results.update({'val_loss': valid_loss})
 
@@ -514,7 +511,7 @@ if __name__ == "__main__":
             misc.print_row([results[key] for key in results_keys],
                            colwidth=colwidth)
 
-            if algorithm.trainable:
+            if eval_loss:
                 if valid_loss < best_valid_loss:
                     best_valid_loss = valid_loss
                     best_valid_results = results.copy()
@@ -546,7 +543,7 @@ if __name__ == "__main__":
             # save checkpoint if needed, but the checkpoint size may be large
             # save_checkpoint(f'model_step{step}.pkl')
 
-    if args.wandb_logger and algorithm.trainable:
+    if args.wandb_logger and eval_loss:
         wandb.log({f'best/val_loss': best_valid_loss})
         wandb.log({f'best/{k}': v for k, v in best_valid_results.items()})
         wandb.log({f'best_all_doms/val_loss': best_valid_loss_all_doms})

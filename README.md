@@ -48,7 +48,8 @@ bash run_sweep_clip.sh
 ```
 A sweep over 10 hyperparameters and 5 random seeds is launched for each dataset and algorithm. 
 By default, the CLIP-RN50 model is used, and you can also run with other models by changing the `clip_model` argument, e.g., `ViT-B/32` for CLIP-ViT-B/32.
-Also to launch a sweep, you need to select or implement a command launcher in [domainbed/command_launchers.py](DomainBed/domainbed/command_launchers.py) by setting the `launcher` argument. If you are using slurm, we already implement a slurm launcher that you can adapt from.
+Also to launch a sweep, you need to select or implement a command launcher in [domainbed/command_launchers.py](DomainBed/domainbed/command_launchers.py) by setting the `launcher` argument. 
+If you are using slurm, we already implement a slurm launcher that you can adapt from.
 
 After the sweep is finished, you can collect result with the notebook [collect_clip_results.ipynb](DomainBed/collect_clip_results.ipynb). Note that the results may be slightly different from the paper due to code cleaning. 
 
@@ -63,7 +64,42 @@ Also you can collect result with the notebook [collect_e2e_results.ipynb](Domain
 However, our CAD bottleneck does lead to consistent improvement surprisingly.
 
 ## Finetune CLIP on LAION-400M
-Coming soon!
+Our paper also shows how to learn generic robust (both task- and domain-agnostic) representations to distribution shift with text-image contrastive loss and an entropy bottleneck that requires no prior knowledge about domains.
+Here we include the code for finetuning CLIP with our proposed objectives on the [LAION-400M](https://laion.ai/laion-400-open-dataset/) dataset and 
+evaluate on the [ImageNet-Testbed](https://github.com/modestyachts/imagenet-testbed) and the [DomainBed](https://github.com/facebookresearch/DomainBed) benchmark, which reproduces our experiments in Sec 6.3. 
+
+### Preparation
+1. Move to the [LAION](LAION/) directory. 
+2. Download the dataset with 1TB of CLIP preprocessed embeddings following the [instructions](https://laion.ai/laion-400-open-dataset/).
+3. Prepare the dataset (you probably need to link the directories to those with large disk space):
+```
+python scripts/prepare_laion_dataset.py --data_download_dir ./data/download --data_processed_dir ./data/processed
+```
+
+### Run finetuning
+To finetune CLIP with and without our entropy bottleneck, run with command:
+```bash
+bash finetune_clip_laion.sh
+```
+By default, the CLIP-ViT-B/32 model is finetuned on LAION-400M for 1 epoch.
+
+### Run evaluation
+
+#### Evaluate on ImageNet-Testbed
+If you want to evaluate finetuned models on [ImageNet-Testbed](https://github.com/modestyachts/imagenet-testbed), where a linear classifier is trained on ImageNet and evaluated on natural distribution shift datasets, run with command:
+```bash
+bash evaluate_imagenet_testbed.sh
+```
+You need to set your ImageNet dataset path with the `imagenet_data_dir` argument. Note that the finetuned models with trained ImageNet classifiers are already registered to ImageNet-Testbed in [imagenet-testbed/src/models/clip_vit.py](LAION/imagenet-testbed/src/models/clip_vit.py).
+After the evaluation is finished, you can collect results with the notebook [collect_results_imagenet_testbed.ipynb](LAION/collect_results_imagenet_testbed.ipynb).
+
+#### Evaluate on DomainBed
+If you want to evaluate finetuned models on [DomainBed](https://github.com/facebookresearch/DomainBed) as before, run with command:
+```bash
+bash evaluate_dombed.sh
+```
+You need to set your DomainBed dataset path with the `dombed_data_dir` argument.
+After the evaluation is finished, you can collect results with the notebook [collect_results_domainbed.ipynb](LAION/collect_results_domainbed.ipynb).
 
 ## Minimal Code for Custom Finetuning <a name="minimal"></a>
 If you want to finetune CLIP on your dataset with our bottlenecks, we provide the minimal code example:
