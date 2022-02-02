@@ -1,4 +1,4 @@
-# OptDom: Learning Optimal Representations for Domain Generalization
+# OptDom: Learning Optimal Representations for Domain Shift
 
 This repository contains the official implementation for [Optimal Representations for Covariate Shift](https://arxiv.org/abs/2201.00057)️. 
 Our paper theoretically characterizes the minimal sufficient representations for optimal domain generalization (DG) under covariate shift and derives practical self-supervised learning (SSL) objectives for learning such representations.
@@ -51,7 +51,7 @@ By default, the CLIP-RN50 model is used, and you can also run with other models 
 Also to launch a sweep, you need to select or implement a command launcher in [domainbed/command_launchers.py](DomainBed/domainbed/command_launchers.py) by setting the `launcher` argument. 
 If you are using slurm, we already implement a slurm launcher that you can adapt from.
 
-After the sweep is finished, you can collect result with the notebook [collect_clip_results.ipynb](DomainBed/collect_clip_results.ipynb). Note that the results may be slightly different from the paper due to code cleaning. 
+After the sweep is finished, you can collect result with the notebooks [collect_clip_results.ipynb](DomainBed/collect_clip_results.ipynb) and [collect_clip_results_per_setup.ipynb](DomainBed/collect_clip_results_per_setup.ipynb). Note that the results may be slightly different from the paper due to code cleaning. 
 
 
 ### (Optional) Run CAD in DomainBed setup
@@ -208,11 +208,12 @@ for step in range(n_steps):
 ## Cite
 If you find this work relevant to your work, please cite our paper:
 ```
-@article{ruan2021optdom,
-  title={Optimal Representations for Covariate Shift},
-  author={Ruan, Yangjun and  Dubois, Yann and Maddison, Chris J},
-  journal={arXiv preprint arXiv:2201.00057},
-  year={2022},
+@inproceedings{ruan2022optdom,
+    title={Optimal Representations for Covariate Shift},
+    author={Yangjun Ruan and Yann Dubois and Chris J. Maddison},
+    booktitle={International Conference on Learning Representations},
+    year={2022},
+    url={https://openreview.net/forum?id=Rf58LPCwJj0}
 }
 ```
 
